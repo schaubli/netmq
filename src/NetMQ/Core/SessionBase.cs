@@ -360,6 +360,11 @@ namespace NetMQ.Core
         }
 
         /// <summary>
+        /// Gets the address as string
+        /// </summary>
+        public string GetAddress { get { return m_addr.ToString(); } }
+
+        /// <summary>
         /// Get the contained socket.
         /// </summary>
         public SocketBase Socket => m_socket;

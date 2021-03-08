@@ -336,7 +336,31 @@ namespace NetMQ.Core
         /// Hello Message to send to peer upon connecting
         /// </summary>
         HelloMessage = 57,
-        
+
+
+
+        Correlate = 58, // in zmq it's 52 and 53, but I guess it does not matter so long as it is unique.
+
+
+        Relaxed = 59,
+
+        /// <summary>
+        /// Username for plain authentication
+        /// </summary>
+        PlainUsername = 60,
+
+        /// <summary>
+        /// Password for plain authentication
+        /// </summary>
+        PlainPassword = 61,
+
+
+
+        /// <summary>
+        /// Act as plain authentication server
+        /// </summary>
+        PlainServer = 62,
+
         /// <summary>
         /// Specifies the byte-order: big-endian, vs little-endian.
         /// </summary>
@@ -346,8 +370,5 @@ namespace NetMQ.Core
         /// Specifies the max datagram size for PGM.
         /// </summary>
         PgmMaxTransportServiceDataUnitLength = 1001,
-
-        Correlate = 58, // in zmq it's 52 and 53, but I guess it does not matter so long as it is unique.
-        Relaxed = 59
     }
 }

@@ -618,7 +618,7 @@ namespace NetMQ
         {
             src.CopyTo(Slice(offset));
         }
-        
+
         /// <summary>
         /// Get and set the byte value in the <see cref="Data"/> buffer at a specific index.
         /// </summary>

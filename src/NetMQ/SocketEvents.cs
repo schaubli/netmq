@@ -52,11 +52,31 @@ namespace NetMQ
         /// Failed to close socket
         /// </summary>
         CloseFailed = 256,
-        
+
         /// <summary>
         /// Socket disconnected
         /// </summary>
         Disconnected = 512,
+
+        /// <summary>
+        /// Handshake failed
+        /// </summary>
+        HandshakeFailedNoDetail = 1024,
+
+        /// <summary>
+        /// Handshake failed the protocol
+        /// </summary>
+        HandshakeFailedProtocol = 2048,
+
+        /// <summary>
+        /// Handshake failed the authentication
+        /// </summary>
+        HandshakeFailedAuth = 4096,
+
+        /// <summary>
+        /// Handshake succeeded
+        /// </summary>
+        HandshakeSucceeded = 8192,
 
         /// <summary>
         /// Listen to all events
@@ -65,6 +85,8 @@ namespace NetMQ
               ConnectRetried | Listening |
               BindFailed | Accepted |
               AcceptFailed | Closed |
-              CloseFailed | Disconnected
+              CloseFailed | Disconnected | 
+              HandshakeFailedNoDetail | HandshakeFailedProtocol | 
+              HandshakeFailedAuth | HandshakeSucceeded
     }
 }

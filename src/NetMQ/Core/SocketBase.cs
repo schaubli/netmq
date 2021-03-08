@@ -1695,6 +1695,38 @@ namespace NetMQ.Core
             MonitorEvent(new MonitorEvent(SocketEvents.Disconnected, addr, ch));
         }
 
+        public void EventHandshakeFailedNoDetail(string addr, ErrorCode errno)
+        {
+            if ((m_monitorEvents & SocketEvents.HandshakeFailedNoDetail) == 0)
+                return;
+
+            MonitorEvent(new MonitorEvent(SocketEvents.HandshakeFailedNoDetail, addr, errno));
+        }
+
+        public void EventHandshakeFailedProtocol(string addr, ErrorCode errno)
+        {
+            if ((m_monitorEvents & SocketEvents.HandshakeFailedProtocol) == 0)
+                return;
+
+            MonitorEvent(new MonitorEvent(SocketEvents.HandshakeFailedProtocol, addr, errno));
+        }
+
+        public void EventHandshakeFailedAuth(string addr, ErrorCode errno)
+        {
+            if ((m_monitorEvents & SocketEvents.HandshakeFailedAuth) == 0)
+                return;
+
+            MonitorEvent(new MonitorEvent(SocketEvents.HandshakeFailedAuth, addr, errno));
+        }
+
+        public void EventHandshakeSucceeded(string addr, ErrorCode errno)
+        {
+            if ((m_monitorEvents & SocketEvents.HandshakeSucceeded) == 0)
+                return;
+
+            MonitorEvent(new MonitorEvent(SocketEvents.HandshakeSucceeded, addr, errno));
+        }
+
         private void MonitorEvent(MonitorEvent monitorEvent)
         {
             if (m_monitorSocket == null)

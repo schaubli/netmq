@@ -405,6 +405,33 @@ namespace NetMQ
         }
 
         /// <summary>
+        /// Sets the socket's Plain Username
+        /// </summary>
+        public string PlainUsername
+        {
+            get => m_socket.GetSocketOptionX<string>(ZmqSocketOption.PlainUsername);
+            set => m_socket.SetSocketOption(ZmqSocketOption.PlainUsername, value);
+        }
+
+        /// <summary>
+        /// Sets the socket's Plain Password
+        /// </summary>
+        public string PlainPassword
+        {
+            get => m_socket.GetSocketOptionX<string>(ZmqSocketOption.PlainPassword);
+            set => m_socket.SetSocketOption(ZmqSocketOption.PlainPassword, value);
+        }
+
+        /// <summary>
+        /// Sets the socket's Plain Server
+        /// </summary>
+        public bool PlainServer
+        {
+            get => m_socket.GetSocketOptionX<bool>(ZmqSocketOption.PlainServer);
+            set => m_socket.SetSocketOption(ZmqSocketOption.PlainServer, value);
+        }
+
+        /// <summary>
         /// Defines whether the socket will act as server for CURVE security.
         /// A value of true means the socket will act as CURVE server.
         /// A value of false means the socket will not act as CURVE server, and its security role then depends on other option settings.

@@ -6,7 +6,6 @@ namespace NetMQ.Core.Mechanisms
 {
     internal class NullMechanism : Mechanism
     {
-        const string ReadyCommandName = "READY";
         private const string ErrorCommandName = "ERROR";
         private const int ErrorReasonLengthSize = 1;
 
@@ -64,6 +63,8 @@ namespace NetMQ.Core.Mechanisms
 
         public override PullMsgResult NextHandshakeCommand(ref Msg msg)
         {
+            Console.Write("Creating Message: ");
+            PrintMessage(msg);
             if (m_readyCommandSent)
                 return PullMsgResult.Empty;
 
@@ -75,6 +76,8 @@ namespace NetMQ.Core.Mechanisms
 
         public override PushMsgResult ProcessHandshakeCommand(ref Msg msg)
         {
+            Console.Write("Processing Message: ");
+            PrintMessage(msg);
             if (m_readyCommandReceived || m_errorCommandReceived)
                 return PushMsgResult.Error;
 

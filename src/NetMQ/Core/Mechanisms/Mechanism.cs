@@ -38,12 +38,14 @@ namespace NetMQ.Core.Mechanisms
             public const string Gather = "GATHER";
             public const string Scatter = "SCATTER";
         }
-        
+
+        protected const string ReadyCommandName = "READY";
+
         const int NameLengthSize = sizeof(byte);
         const int ValueLengthSize = sizeof(Int32);
 
-        private const string ZmtpPropertySocketType = "Socket-Type";
-        private const string ZmtpPropertyIdentity = "Identity";
+        protected const string ZmtpPropertySocketType = "Socket-Type";
+        protected const string ZmtpPropertyIdentity = "Identity";
 
         public Mechanism(SessionBase session, Options options)
         {
@@ -224,12 +226,15 @@ namespace NetMQ.Core.Mechanisms
             AddBasicProperties(msg.Slice(prefix.Length + 1));
         }
 
+        
+
         /// <summary>
         /// Parses a metadata.
         /// Metadata consists of a list of properties consisting of
         /// name and value as size-specified strings.
         /// </summary>
         /// <returns>Returns true on success and false on error.</returns>
+    
         protected bool ParseMetadata(Span<byte> source)
         {
             while (source.Length > 1)
@@ -273,6 +278,38 @@ namespace NetMQ.Core.Mechanisms
             return true;
         }
 
+        protected int ParseErrorMessage(Msg msg)
+        {
+            if (msg.Size < 7 && msg.Size != 6)
+            {
+                Session.Socket.EventHandshakeFailedProtocol(Session.GetAddress, ErrorCode.ProtocolNotSupported);
+                return (int) ErrorCode.ProtocolNotSupported;
+            }
+            if (msg.Size >= 7)
+            {
+                byte errorReasonLength = msg[6];
+                if (errorReasonLength > msg.Size - 7)
+                {
+                    Session.Socket.EventHandshakeFailedProtocol(Session.GetAddress, ErrorCode.ProtocolNotSupported);
+                    return (int)ErrorCode.ProtocolNotSupported;
+                } 
+                // triple digit status code
+                if (msg.Size == 10)
+                {
+                    byte[] statusBuffer = new byte[3];
+                    Array.Copy(msg.ToArray(), 7, statusBuffer, 0, 3);
+                    throw new NotImplementedException();
+                    //String statusCode = new String(statusBuffer, ZMQ.CHARSET);
+                    //if (handleErrorReason(statusCode) < 0)
+                    //{
+                    //    return ZError.EPROTO;
+                    //}
+                }
+
+            }
+            return 0;
+        }
+
         /// <summary>
         /// This is called by ParseProperty method whenever it
         /// parses a new property. The function returns true
@@ -290,7 +327,7 @@ namespace NetMQ.Core.Mechanisms
         }
 
         /// <summary>
-        /// Returns true iff socket associated with the mechanism
+        /// Returns true if socket associated with the mechanism
         /// is compatible with a given socket type 'type'.
         /// </summary>
         /// <returns></returns>
@@ -337,6 +374,33 @@ namespace NetMQ.Core.Mechanisms
             }
         }
 
+        protected bool Compare(Msg msg, String data, bool includeLength)
+        {
+            int length = data.Length;
+            if (length >= 256)
+                throw new ArgumentOutOfRangeException(nameof(data), data, null);
+
+            int start = includeLength ? 1 : 0;
+            if (msg.Size < length + start)
+            {
+                return false;
+            }
+            bool comparison = !includeLength || length == (msg[0] & 0xff);
+            if (comparison)
+            {
+                for (int idx = start; idx < length; ++idx)
+                {
+                    Console.WriteLine("Comparing " + msg[idx] + " with " + data[idx - start]);
+                    comparison = (msg[idx] == data[idx - start]);
+                    if (!comparison)
+                    {
+                        break;
+                    }
+                }
+            }
+            return comparison;
+        }
+
         protected bool CheckBasicCommandStructure(ref Msg msg)
         {
             if (msg.Size <= 1 || 
@@ -352,11 +416,27 @@ namespace NetMQ.Core.Mechanisms
         {
             if (msg.Size >= command.Length + 1)
             {
-                string msgCommand = msg.GetString(Encoding.ASCII, 1, msg[0]);
-                return msgCommand == command && msg[0] == command.Length;
+                string msgCommand = msg.GetString(Encoding.ASCII, 1, command.Length); // TODO v > 4.3.1 msg[0]
+                return msgCommand == command; // && msg[0] == command.Length;
             }
 
             return false;
+        }
+
+        public static void PrintMessage(Msg msg)
+        {
+            for (int i = 0; i < msg.Size; i++)
+            {
+                if (msg[i] < 32 || (msg[i] > 47 && msg[i] < 58))
+                {
+                    Console.Write(" " + msg[i] + " ");
+                }
+                else
+                {
+                    Console.Write(((char)msg[i]));
+                }
+            }
+            Console.Write("\n");
         }
     }
 }

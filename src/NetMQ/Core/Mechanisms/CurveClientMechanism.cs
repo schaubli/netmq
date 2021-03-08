@@ -87,6 +87,7 @@ namespace NetMQ.Core.Mechanisms
 
         public override PushMsgResult ProcessHandshakeCommand(ref Msg msg)
         {
+            Console.WriteLine("Curve ProcessHandshakeCommand");
             PushMsgResult result;
 
             if (IsCommand("WELCOME", ref msg))
